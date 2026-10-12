@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nibbles: The Demonic Trash Panda</title>
+    <style>
+        :root {
+            --bg-color: #0b0711;
+            --card-bg: #160f23;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+            --text-color: #f3e8ff;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background-color: var(--card-bg);
+            border: 2px solid #3b2d54;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 20px rgba(139, 92, 246, 0.2);
+            text-align: center;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            margin: 0 0 5px 0;
+            font-size: 1.8rem;
+            color: #d8b4fe;
+            text-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            color: #a78bfa;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* Speech Bubble */
+        .speech-container {
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .speech-bubble {
+            position: relative;
+            background: #26193c;
+            border: 2px solid var(--accent-purple);
+            border-radius: 15px;
+            padding: 12px 18px;
+            font-weight: bold;
+            font-size: 1.05rem;
+            color: #fff;
+            max-width: 85%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 12px 10px 0;
+            border-style: solid;
+            border-color: #26193c transparent;
+            display: block;
+            width: 0;
+        }
+
+        .speech-bubble::before {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 13px 11px 0;
+            border-style: solid;
+            border-color: var(--accent-purple) transparent;
+            display: block;
+            width: 0;
+        }
+
+        /* Nibbles Stage */
+        .stage {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 0 auto 20px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .nibbles-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.3));
+            transition: transform 0.1s ease;
+        }
+
+        /* Animations */
+        .poke-anim {
+            animation: shake 0.3s ease-in-out;
+        }
+
+        .feed-anim {
+            animation: bounce 0.4s ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @keyframes shake {
+            0% { transform: scale(1) rotate(0deg); }
+            20% { transform: scale(0.95) rotate(-8deg); }
+            40% { transform: scale(1.05) rotate(8deg); }
+            60% { transform: scale(0.98) rotate(-4deg); }
+            80% { transform: scale(1.02) rotate(4deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        @keyframes bounce {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15) translateY(-10px); }
+            100% { transform: scale(1); }
+        }
+
+        /* Controls */
+        .controls-title {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 10px;
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .feed-btn {
+            background: linear-gradient(135deg, #3b0764, #6b21a8);
+            border: 1px solid #a855f7;
+            color: white;
+            padding: 12px 8px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .feed-btn:hover {
+            background: linear-gradient(135deg, #581c87, #7e22ce);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(168, 85, 247, 0.4);
+        }
+
+        .feed-btn:active {
+            transform: translateY(0);
+        }
+
+        .feed-btn span {
+            font-size: 1.4rem;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .footer a {
+            color: var(--accent-pink);
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>NIBBLES</h1>
+    <div class="subtitle">The Demonic Trash Panda</div>
+
+    <div class="speech-container">
+        <div class="speech-bubble" id="speech">
+            Give me some fuckin' trash or poke me, I dare ya.
+        </div>
+    </div>
+
+    <div class="stage" id="nibbles-stage" onclick="pokeNibbles()">
+        <!-- Points directly to nibbles.png in the same GitHub folder -->
+        <img src="nibbles.png" alt="Nibbles the Demonic Raccoon" class="nibbles-img" id="nibbles-img">
+    </div>
+
+    <div class="controls-title">FEED THE DEMON</div>
+    <div class="btn-grid">
+        <button class="feed-btn" onclick="feedNibbles('garbage')">
+            <span>🗑️</span> Garbage
+        </button>
+        <button class="feed-btn" onclick="feedNibbles('bones')">
+            <span>🦴</span> Bones
+        </button>
+        <button class="feed-btn" onclick="feedNibbles('scraps')">
+            <span>🥩</span> Scraps
+        </button>
+    </div>
+
+    <div class="footer">
+        Featured in <em>Under Moonlit Ashes</em>
+    </div>
+</div>
+
+<script>
+    const speechElement = document.getElementById('speech');
+    const nibblesImg = document.getElementById('nibbles-img');
+
+    // Web Audio API Synthesizer for Sound Effects
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playSound(type) {
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+
+        if (type === 'poke') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(120, now);
+            osc.frequency.exponentialRampToValueAtTime(40, now + 0.2);
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+            osc.start(now);
+            osc.stop(now + 0.2);
+        } else if (type === 'feed') {
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(200, now);
+            osc.frequency.exponentialRampToValueAtTime(400, now + 0.15);
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
+            osc.start(now);
+            osc.stop(now + 0.15);
+        }
+    }
+
+    // Dialogue lists
+    const pokeDialogue = [
+        "We are doing the spooky bitch thing!",
+        "Touch me again and I'll bite off your fuckin' thumb!",
+        "Keep poking, sweetcheeks. See what happens.",
+        "What the hell do you want, warm-blood?",
+        "Hands off the fur, you horny weirdo!",
+        "I'm not a plushie, I'm a nightmare!",
+        "Poke me one more time and I'm shitting in your boots."
+    ];
+
+    const feedGarbageDialogue = [
+        "Hell yes! Pure rotten filth! My favorite!",
+        "Mmm, smells like a dumpster's ass. Delicious!",
+        "Finally, some good fucking garbage!",
+        "Gimme that greasy trash, baby!"
+    ];
+
+    const feedBonesDialogue = [
+        "Crunch crunch, motherfucker!",
+        "Ah, marrow! Tastes like fresh murder!",
+        "I'll save the sharp bits to shank you later.",
+        "Need more bone meal for my dark rituals... and my belly."
+    ];
+
+    const feedScrapsDialogue = [
+        "Ooh, raw flesh! You shouldn't have... actually, keep 'em coming!",
+        "Grub time! Don't look at me while I chew, perv!",
+        "Bloody and dirty—just how I like it!",
+        "Slurp! Got any more of that sketchy meat?"
+    ];
+
+    function getRandomDialogue(array) {
+        return array[Math.floor(Math.random() * array.length)];
+    }
+
+    function triggerAnimation(className) {
+        nibblesImg.classList.remove('poke-anim', 'feed-anim');
+        void nibblesImg.offsetWidth;
+        nibblesImg.classList.add(className);
+    }
+
+    function pokeNibbles() {
+        playSound('poke');
+        triggerAnimation('poke-anim');
+        speechElement.innerText = getRandomDialogue(pokeDialogue);
+    }
+
+    function feedNibbles(type) {
+        playSound('feed');
+        triggerAnimation('feed-anim');
+        if (type === 'garbage') {
+            speechElement.innerText = getRandomDialogue(feedGarbageDialogue);
+        } else if (type === 'bones') {
+            speechElement.innerText = getRandomDialogue(feedBonesDialogue);
+        } else if (type === 'scraps') {
+            speechElement.innerText = getRandomDialogue(feedScrapsDialogue);
+        }
+    }
+</script>
+
+</body>
+</html>
