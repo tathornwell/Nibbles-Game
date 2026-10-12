@@ -49,9 +49,23 @@
         .subtitle {
             font-size: 0.85rem;
             color: #a78bfa;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             letter-spacing: 1px;
             text-transform: uppercase;
+        }
+
+        /* Live Feed Counter Badge */
+        .counter-badge {
+            background: #231238;
+            border: 1px solid var(--accent-pink);
+            color: var(--accent-pink);
+            font-size: 0.85rem;
+            font-weight: bold;
+            padding: 6px 14px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 15px;
+            box-shadow: 0 0 10px rgba(236, 72, 153, 0.2);
         }
 
         /* Speech Bubble */
@@ -197,12 +211,6 @@
             font-size: 0.75rem;
             color: #64748b;
         }
-
-        .footer a {
-            color: var(--accent-pink);
-            text-decoration: none;
-            font-weight: bold;
-        }
     </style>
 </head>
 <body>
@@ -211,6 +219,11 @@
     <h1>NIBBLES</h1>
     <div class="subtitle">The Demonic Trash Panda</div>
 
+    <!-- Live Counter Display -->
+    <div class="counter-badge">
+        🔥 Total Times Fed: <span id="feed-count">...</span>
+    </div>
+
     <div class="speech-container">
         <div class="speech-bubble" id="speech">
             Give me some fuckin' trash or poke me, I dare ya.
@@ -218,7 +231,6 @@
     </div>
 
     <div class="stage" id="nibbles-stage" onclick="pokeNibbles()">
-        <!-- Points directly to nibbles.png in the same GitHub folder -->
         <img src="nibbles.png" alt="Nibbles the Demonic Raccoon" class="nibbles-img" id="nibbles-img">
     </div>
 
@@ -243,8 +255,46 @@
 <script>
     const speechElement = document.getElementById('speech');
     const nibblesImg = document.getElementById('nibbles-img');
+    const feedCountElement = document.getElementById('feed-count');
 
-    // Web Audio API Synthesizer for Sound Effects
+    // Unique counter namespace using your book title/character name
+    const COUNTER_NAMESPACE = "tathornwell_under_moonlit_ashes";
+    const COUNTER_KEY = "nibbles_feeds";
+
+    // Fetch initial global feed count on page load
+    async function initCounter() {
+        try {
+            const res = await fetch(`https://api.countapi.xyz/get/${COUNTER_NAMESPACE}/${COUNTER_KEY}`);
+            const data = await res.json();
+            if (data.value !== undefined) {
+                feedCountElement.innerText = data.value.toLocaleString();
+            } else {
+                // Initialize counter if first run
+                await fetch(`https://api.countapi.xyz/create?namespace=${COUNTER_NAMESPACE}&key=${COUNTER_KEY}&value=0`);
+                feedCountElement.innerText = "0";
+            }
+        } catch (err) {
+            feedCountElement.innerText = "666"; // Fallback aesthetic
+        }
+    }
+
+    // Increment global feed count when fed
+    async function incrementCounter() {
+        try {
+            const res = await fetch(`https://api.countapi.xyz/hit/${COUNTER_NAMESPACE}/${COUNTER_KEY}`);
+            const data = await res.json();
+            if (data.value !== undefined) {
+                feedCountElement.innerText = data.value.toLocaleString();
+            }
+        } catch (err) {
+            // Silence silent background errors
+        }
+    }
+
+    // Call counter on launch
+    initCounter();
+
+    // Audio Engine
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
     function playSound(type) {
@@ -328,6 +378,8 @@
     function feedNibbles(type) {
         playSound('feed');
         triggerAnimation('feed-anim');
+        incrementCounter(); // Boost count every time someone feeds him
+
         if (type === 'garbage') {
             speechElement.innerText = getRandomDialogue(feedGarbageDialogue);
         } else if (type === 'bones') {
